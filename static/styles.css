@@ -1,6 +1,4 @@
-/* =========================
-   RESET
-========================= */
+/* RESET */
 
 *,
 *::before,
@@ -11,9 +9,7 @@
   user-select: none;
 }
 
-/* =========================
-   BODY
-========================= */
+/* BODY */
 
 body {
   width: 100%;
@@ -29,9 +25,7 @@ body {
   color: #272f35;
 }
 
-/* =========================
-   MAIN WRAPPER
-========================= */
+/* MAIN WRAPPER */
 
 .main {
   position: relative;
@@ -50,9 +44,7 @@ body {
    -10px -10px 10px #b1c1c7;
 }
 
-/* =========================
-   RESPONSIVE SCALE
-========================= */
+/* RESPONSIVE SCALE */
 
 @media (max-width: 1200px) {
   .main { transform: scale(0.7); }
@@ -67,9 +59,7 @@ body {
   .main { transform: scale(0.4); }
 }
 
-/* =========================
-   FORM CONTAINERS
-========================= */
+/* FORM CONTAINERS */
 
 .container {
   position: absolute;
@@ -99,9 +89,7 @@ body {
   z-index: 0;
 }
 
-/* =========================
-   FORM
-========================= */
+/* FORM */
 
 .form {
   width: 100%;
@@ -171,9 +159,7 @@ body {
   text-decoration: none;
 }
 
-/* =========================
-   TEXT
-========================= */
+/* TEXT */
 
 .title {
   font-size: 34px;
@@ -189,9 +175,7 @@ body {
   line-height: 1.6;
 }
 
-/* =========================
-   BUTTON
-========================= */
+/* BUTTON */
 
 .button {
   width: 180px;
@@ -214,9 +198,7 @@ body {
    -8px -8px 16px #dde0e3;
 }
 
-/* =========================
-   SWITCH PANEL
-========================= */
+/* SWITCH PANEL */
 
 .switch {
   position: absolute;
@@ -310,9 +292,7 @@ body {
    -2px -2px 6px #f9f9f9;
 }
 
-/* =========================
-   STATE CLASSES (JS)
-========================= */
+/* STATE CLASSES (JS) */
 
 .is-txr {
   left: calc(100% - 400px);
@@ -344,4 +324,47 @@ body {
 @keyframes is-gx {
   0%, 10%, 100% { width: 400px; }
   30%, 50% { width: 500px; }
+}
+/* BUDGETWISE LOGO STAMP */
+
+.logo-stamp {
+    position: absolute;
+    top: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    
+    font-size: 2.2rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #0e1225, #000000);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    
+    font-family: 'Montserrat', sans-serif;
+    text-shadow: 
+        0 4px 12px rgba(102, 126, 234, 0.4),
+        0 2px 4px rgba(118, 75, 162, 0.3);
+    
+    z-index: 300;
+    pointer-events: none;
+    
+    /* Perfect match with dashboard gradient */
+    background: linear-gradient(135deg, rgba(67, 96, 225, 0.9), rgba(92, 40, 143, 0.9));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Responsive logo scaling */
+@media (max-width: 1200px) {
+    .logo-stamp { font-size: 1.9rem; }
+}
+@media (max-width: 1000px) {
+    .logo-stamp { font-size: 1.7rem; }
+}
+@media (max-width: 800px) {
+    .logo-stamp { font-size: 1.5rem; }
+}
+@media (max-width: 600px) {
+    .logo-stamp { font-size: 1.3rem; top: 20px; }
 }

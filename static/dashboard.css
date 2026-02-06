@@ -1,0 +1,313 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #93dbe5 20%, #6beeff 50%, #93dbe5 100%);
+    min-height: 100vh;
+    color: #333;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 3rem;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.logo {
+    font-size: 2rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 10px;
+}
+
+.logout-btn {
+    padding: 0.5rem 1.5rem;
+    background: #a04242;
+    color: white;
+    text-decoration: none;
+    border-width: 2px;
+    border-radius: 25px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    margin-top: 2px;
+}
+
+.logout-btn:hover {
+    background: #4b486e;
+    transform: translateY(-2px);
+}
+
+.welcome-text {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #4b5563;
+}
+
+.main-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.welcome-section {
+    text-align: center;
+    color: white;
+    margin-bottom: 3rem;
+}
+
+.welcome-section h2 {
+    font-size: 3rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+    color: #f1f2f3;
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.welcome-section p {
+    font-size: 1.3rem;
+    opacity: 0.9;
+    color: #6b7280;
+}
+
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
+
+.metric-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    padding: 2.5rem;
+    border-radius: 20px;
+    box-shadow: 2px 20px 40px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.metric-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    background: linear-gradient(90deg, #667eea, #764ba2);
+}
+
+/* .metric-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.15);
+} */
+
+.metric-card h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #6b7280;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.amount {
+    font-size: 3.5rem;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 0.5rem;
+}
+
+.total-expenses .amount { color: #f59e0b; }
+.monthly-budget .amount { color: #10b981; }
+.upcoming-forecast .amount { color: #2940d7; }
+
+.null-state {
+    color: #9ca3af !important;
+    font-size: 1.8rem !important;
+}
+
+.edit-btn {
+    background:#0f5d6d;
+    color: white;
+    border: none;
+    padding: 0.8rem 2rem;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.edit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4);
+}
+
+.edit-input {
+    width: 100%;
+    padding: 1rem;
+    font-size: 2rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    text-align: center;
+    font-weight: 700;
+    transition: all 0.3s ease;
+}
+
+.edit-input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.actions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+}
+
+.action-btn {
+    padding: 1.5rem 2.5rem;
+    border: none;
+    border-radius: 16px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.action-btn.primary {
+    background: linear-gradient(135deg, #53ff87, #9fe46d);
+    color: white;
+    border: 1px solid #00a220;
+    box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4);
+}
+
+.action-btn.primary:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px rgba(16, 185, 129, 0.5);
+}
+
+.action-btn.secondary {
+    background: linear-gradient(135deg, #7568f0, #a52dc9);
+    color: white;
+    box-shadow: 0 10px 30px rgba(107, 114, 128, 0.3);
+    border: 1px solid #696969;
+}
+
+.action-btn.secondary:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px rgba(107, 114, 128, 0.4);
+}
+
+.overview-section {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border-radius: 24px;
+    padding: 3rem;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.overview-section h3 {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #1f2937;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.empty-state {
+    text-align: center;
+    font-size: 1.3rem;
+    color: #9ca3af;
+    font-style: italic;
+}
+
+.charts-placeholder {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.chart-placeholder {
+    height: 250px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+    border: 2px dashed #cbd5e1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #94a3b8;
+    font-size: 1.1rem;
+}
+
+.alert {
+    position: fixed;
+    top: 100px;
+    right: 2rem;
+    padding: 1.5rem 2rem;
+    border-radius: 12px;
+    font-weight: 600;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    transform: translateX(400px);
+    transition: all 0.4s ease;
+}
+
+.alert.success {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+}
+
+.alert.error {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+}
+
+.alert.show {
+    transform: translateX(0);
+}
+
+@media (max-width: 768px) {
+    .metrics-grid, .charts-placeholder {
+        grid-template-columns: 1fr;
+    }
+    
+    .header {
+        padding: 1rem 1.5rem;
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+    
+    .welcome-section h2 {
+        font-size: 2rem;
+    }
+    
+    .amount {
+        font-size: 2.5rem !important;
+    }
+}

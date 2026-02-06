@@ -3,9 +3,145 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>BudgetWise Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
 </head>
 <body>
-    <h1>Welcome to dashboard</h1>
+    <header class="header">
+        <div class="header-left">
+            <h1 class="logo">BudgetWise</h1>
+            <a href="/logout" class="logout-btn">Logout</a>
+        </div>
+        <div class="header-right">
+            <span class="welcome-text">Welcome, {{ user }}!</span>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <section class="welcome-section">
+            <h2>Get Started</h2>
+            <p>Set your first budget and add expenses to see forecasts!</p>
+        </section>
+
+        <section class="metrics-grid" id="metrics-grid">
+            <div class="metric-card total-expenses">
+                <h3>Total Expenses</h3>
+                <p class="amount" id="total-expenses">{{ '₹0' if total_expenses == 0 else '₹%.0f'|format(total_expenses) }}</p>
+            </div>
+            
+            <div class="metric-card monthly-budget">
+                <h3>Monthly Budget</h3>
+                <p class="amount editable null-state" id="budget-display">{{ 'N/A' if budget_amount == 0 else '₹%.0f'|format(budget_amount) }}</p>
+                <button class="edit-btn" onclick="editBudget()">Set Budget</button>
+                <input type="number" id="budget-input" class="edit-input" style="display: none;" placeholder="Enter budget (₹)">
+            </div>
+            
+            <div class="metric-card upcoming-forecast">
+                <h3>Upcoming Forecast</h3>
+                <p class="amount null-state" id="forecast-amount">{{ 'N/A' if forecast_amount == 0 else '₹%.0f'|format(forecast_amount) }}</p>
+            </div>
+        </section>
+
+        <section class="actions-grid">
+            <button class="action-btn primary" onclick="addExpense()">+ Add Expense</button>
+            <button class="action-btn secondary" onclick="openProfile()">Profile</button>
+        </section>
+
+        <section class="overview-section null-state">
+            <h3>Spending Overview</h3>
+            <p class="empty-state">Add your first expense to see charts and insights</p>
+            <div class="charts-placeholder">
+                <div class="chart-placeholder bar-placeholder"></div>
+                <div class="chart-placeholder pie-placeholder"></div>
+            </div>
+        </section>
+
+        <!-- Alert -->
+        <div class="alert" id="alert" style="display: none;">
+            <strong id="alert-message"></strong>
+        </div>
+    </main>
+
+    <script>
+        let isEditingBudget = false;
+
+        async function editBudget() {
+            const display = document.getElementById('budget-display');
+            const input = document.getElementById('budget-input');
+            
+            if (!isEditingBudget) {
+                isEditingBudget = true;
+                input.value = display.textContent.replace(/[₹,]/g, '') || '';
+                display.style.display = 'none';
+                input.style.display = 'block';
+                input.focus();
+            } else {
+                const amount = parseFloat(input.value);
+                if (amount && amount > 0) {
+                    const month = new Date().toISOString().slice(0, 7);
+                    try {
+                        const response = await fetch('/api/update_budget', {
+                            method: 'POST',
+                            headers: {'Content-Type': 'application/json'},
+                            body: JSON.stringify({amount: amount, month_year: month})
+                        });
+                        if (response.ok) {
+                            display.textContent = `₹${amount.toLocaleString()}`;
+                            display.classList.remove('null-state');
+                            input.style.display = 'none';
+                            display.style.display = 'block';
+                            showAlert('Budget updated successfully!', 'success');
+                        }
+                    } catch (error) {
+                        showAlert('Failed to update budget', 'error');
+                    }
+                }
+                isEditingBudget = false;
+            }
+        }
+
+        async function addExpense() {
+            const amount = prompt('Enter expense amount (₹):');
+            const category = prompt('Enter category:\nFood\nTravel\nShopping\nOthers');
+            const date = prompt('Enter date (YYYY-MM-DD):', new Date().toISOString().slice(0, 10));
+            
+            if (amount && category) {
+                try {
+                    const response = await fetch('/api/add_expense', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({
+                            amount: parseFloat(amount), 
+                            category: category, 
+                            date: date
+                        })
+                    });
+                    if (response.ok) {
+                        location.reload();
+                    }
+                } catch (error) {
+                    showAlert('Failed to add expense', 'error');
+                }
+            }
+        }
+
+        function openProfile() {
+            alert('Profile page coming soon!');
+        }
+
+        function showAlert(message, type = 'info') {
+            const alertEl = document.getElementById('alert');
+            const messageEl = document.getElementById('alert-message');
+            messageEl.textContent = message;
+            alertEl.className = `alert ${type}`;
+            alertEl.style.display = 'block';
+            setTimeout(() => alertEl.style.display = 'none', 3000);
+        }
+
+        // Handle Enter key in budget input
+        document.getElementById('budget-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') editBudget();
+        });
+    </script>
 </body>
 </html>
