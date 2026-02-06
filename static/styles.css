@@ -332,18 +332,27 @@ body {
     top: 30px;
     left: 50%;
     transform: translateX(-50%);
+
+
+    font-size: 2rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 10px;
     
-    font-size: 2.2rem;
+    /* font-size: 2.2rem;
     font-weight: 800;
     background: linear-gradient(135deg, #0e1225, #000000);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    background-clip: text;
+    background-clip: text; */
     
     font-family: 'Montserrat', sans-serif;
-    text-shadow: 
-        0 4px 12px rgba(102, 126, 234, 0.4),
-        0 2px 4px rgba(118, 75, 162, 0.3);
+    /* text-shadow: 
+        0 4px 12px rgba(0, 0, 0, 0.4),
+        0 2px 4px rgb(255, 255, 255); */
     
     z-index: 300;
     pointer-events: none;

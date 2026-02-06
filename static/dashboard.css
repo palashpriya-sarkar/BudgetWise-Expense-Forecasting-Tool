@@ -6,7 +6,7 @@
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #93dbe5 20%, #6beeff 50%, #93dbe5 100%);
+    background: #93dbe5;
     min-height: 100vh;
     color: #333;
 }
@@ -108,7 +108,7 @@ body {
     right: 0;
     height: 4px;
     border: 2px solid rgba(255, 255, 255, 0.2);
-    background: linear-gradient(90deg, #667eea, #764ba2);
+    background:  #764ba2;
 }
 
 /* .metric-card:hover {
@@ -198,9 +198,9 @@ body {
 }
 
 .action-btn.primary {
-    background: linear-gradient(135deg, #53ff87, #9fe46d);
+    background: #26a43d;
     color: white;
-    border: 1px solid #00a220;
+    border: 1px solid #083410;
     box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4);
 }
 
@@ -210,10 +210,10 @@ body {
 }
 
 .action-btn.secondary {
-    background: linear-gradient(135deg, #7568f0, #a52dc9);
+    background: #5068af;
     color: white;
-    box-shadow: 0 10px 30px rgba(107, 114, 128, 0.3);
-    border: 1px solid #696969;
+    box-shadow: 0 10px 30px rgba(82, 92, 111, 0.3);
+    border: 1px solid #221515;
 }
 
 .action-btn.secondary:hover {
@@ -255,7 +255,7 @@ body {
 .chart-placeholder {
     height: 250px;
     border-radius: 16px;
-    background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+    background: #e2e8f0;
     border: 2px dashed #cbd5e1;
     display: flex;
     align-items: center;
