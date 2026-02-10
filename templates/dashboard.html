@@ -26,24 +26,22 @@
         <section class="metrics-grid" id="metrics-grid">
             <div class="metric-card total-expenses">
                 <h3>Total Expenses</h3>
-                <p class="amount" id="total-expenses">{{ '₹0' if total_expenses == 0 else '₹%.0f'|format(total_expenses) }}</p>
+                <p class="amount" id="total-expenses">{{ "%.2f"|format(total_expenses) if total_expenses else "0.00" }}</p>
             </div>
-            
             <div class="metric-card monthly-budget">
                 <h3>Monthly Budget</h3>
-                <p class="amount editable null-state" id="budget-display">{{ 'N/A' if budget_amount == 0 else '₹%.0f'|format(budget_amount) }}</p>
+                <p class="amount editable null-state" id="budget-display">{{ "%.2f"|format(budget_amount) if budget_amount else "NA" }}</p>
                 <button class="edit-btn" onclick="editBudget()">Set Budget</button>
-                <input type="number" id="budget-input" class="edit-input" style="display: none;" placeholder="Enter budget (₹)">
+                <input type="number" id="budget-input" class="edit-input" style="display: none" placeholder="Enter budget">
             </div>
-            
             <div class="metric-card upcoming-forecast">
                 <h3>Upcoming Forecast</h3>
-                <p class="amount null-state" id="forecast-amount">{{ 'N/A' if forecast_amount == 0 else '₹%.0f'|format(forecast_amount) }}</p>
+                <p class="amount null-state" id="forecast-amount">{{ "%.2f"|format(forecast_amount) if forecast_amount else "NA" }}</p>
             </div>
         </section>
 
         <section class="actions-grid">
-            <button class="action-btn primary" onclick="addExpense()">+ Add Expense</button>
+            <button class="action-btn primary" onclick="openInputPanel()">Add Expense</button>
             <button class="action-btn secondary" onclick="openProfile()">Profile</button>
         </section>
 
@@ -57,91 +55,59 @@
         </section>
 
         <!-- Alert -->
-        <div class="alert" id="alert" style="display: none;">
+        <div class="alert" id="alert" style="display: none">
             <strong id="alert-message"></strong>
         </div>
+
+        <!-- ========== NEW INPUT PANEL ========== -->
+        <div class="input-panel" id="inputPanel">
+            <div class="input-panel-header">
+                <h3>📝 Add Expense</h3>
+                <button class="input-panel-close" onclick="closeInputPanel()">✕</button>
+            </div>
+            
+            <form id="inputForm" class="input-form">
+                <div class="input-form-group">
+                    <label class="input-form-label">Category</label>
+                    <select class="input-form-input input-form-select" id="expenseCategory" required>
+                        <option value="" disabled selected>Select category</option>
+                        <option value="Food">Food &amp; Dining</option>
+                        <option value="Transport">Transportation</option>
+                        <option value="Shopping">Shopping</option>
+                        <option value="Entertainment">Entertainment</option>
+                        <option value="Bills">Bills &amp; Utilities</option>
+                        <option value="Health">Healthcare</option>
+                        <option value="Education">Education</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                
+                <div class="input-form-group">
+                    <label class="input-form-label">Amount</label>
+                    <input type="number" class="input-form-input" id="expenseAmount" placeholder="0.00" step="0.01" min="0" required>
+                </div>
+                
+                <div class="input-form-group">
+                    <label class="input-form-label">Date</label>
+                    <input type="date" class="input-form-input" id="expenseDate" required>
+                </div>
+                
+                <div class="input-form-group">
+                    <label class="input-form-label">Description (Optional)</label>
+                    <textarea class="input-form-input input-form-textarea" id="expenseDescription" placeholder="Add details about this expense..."></textarea>
+                </div>
+                
+                <div class="input-form-buttons">
+                    <button type="button" class="input-form-btn input-form-btn-cancel" onclick="closeInputPanel()">Cancel</button>
+                    <button type="submit" class="input-form-btn input-form-btn-submit">✓ Add Expense</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- MOBILE TOGGLE BUTTON -->
+        <button class="input-toggle-btn" id="inputToggleBtn" onclick="openInputPanel()">➕</button>
     </main>
 
-    <script>
-        let isEditingBudget = false;
-
-        async function editBudget() {
-            const display = document.getElementById('budget-display');
-            const input = document.getElementById('budget-input');
-            
-            if (!isEditingBudget) {
-                isEditingBudget = true;
-                input.value = display.textContent.replace(/[₹,]/g, '') || '';
-                display.style.display = 'none';
-                input.style.display = 'block';
-                input.focus();
-            } else {
-                const amount = parseFloat(input.value);
-                if (amount && amount > 0) {
-                    const month = new Date().toISOString().slice(0, 7);
-                    try {
-                        const response = await fetch('/api/update_budget', {
-                            method: 'POST',
-                            headers: {'Content-Type': 'application/json'},
-                            body: JSON.stringify({amount: amount, month_year: month})
-                        });
-                        if (response.ok) {
-                            display.textContent = `₹${amount.toLocaleString()}`;
-                            display.classList.remove('null-state');
-                            input.style.display = 'none';
-                            display.style.display = 'block';
-                            showAlert('Budget updated successfully!', 'success');
-                        }
-                    } catch (error) {
-                        showAlert('Failed to update budget', 'error');
-                    }
-                }
-                isEditingBudget = false;
-            }
-        }
-
-        async function addExpense() {
-            const amount = prompt('Enter expense amount (₹):');
-            const category = prompt('Enter category:\nFood\nTravel\nShopping\nOthers');
-            const date = prompt('Enter date (YYYY-MM-DD):', new Date().toISOString().slice(0, 10));
-            
-            if (amount && category) {
-                try {
-                    const response = await fetch('/api/add_expense', {
-                        method: 'POST',
-                        headers: {'Content-Type': 'application/json'},
-                        body: JSON.stringify({
-                            amount: parseFloat(amount), 
-                            category: category, 
-                            date: date
-                        })
-                    });
-                    if (response.ok) {
-                        location.reload();
-                    }
-                } catch (error) {
-                    showAlert('Failed to add expense', 'error');
-                }
-            }
-        }
-
-        function openProfile() {
-            alert('Profile page coming soon!');
-        }
-
-        function showAlert(message, type = 'info') {
-            const alertEl = document.getElementById('alert');
-            const messageEl = document.getElementById('alert-message');
-            messageEl.textContent = message;
-            alertEl.className = `alert ${type}`;
-            alertEl.style.display = 'block';
-            setTimeout(() => alertEl.style.display = 'none', 3000);
-        }
-
-        // Handle Enter key in budget input
-        document.getElementById('budget-input').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') editBudget();
-        });
-    </script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
