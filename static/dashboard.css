@@ -6,8 +6,8 @@
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: #93dbe5;
-    min-height: 100vh;
+    background: #E3FDFD;
+    min-height: 80vh;
     color: #333;
 }
 
@@ -15,28 +15,31 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1.5rem 3rem;
+    padding: 1rem 2rem;
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(10px);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);  position: relative; 
+    overflow: hidden;   /* Clips gradient */
 }
 
-.logo {
-    font-size: 2rem;
-    font-weight: 800;
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    margin-bottom: 10px;
+.header::before {
+  content: '';
+  position: absolute;
+  top: -2px; left: -2px; right: -2px; bottom: -2px;
+  background: linear-gradient(135deg,  #E3FDFD,  #A6E3E9, #A6E3E9,  #71C9CE);
+  z-index: -1;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: exclude;
 }
 
 .logout-btn {
     padding: 0.5rem 1.5rem;
-    background: #a04242;
+    background: #FF9494;
     color: white;
     text-decoration: none;
-    border: 2px solid;
+    border: 1px solid #0C2C55;
     border-radius: 25px;
     font-weight: 600;
     transition: all 0.3s ease;
@@ -44,14 +47,14 @@ body {
 }
 
 .logout-btn:hover {
-    background: #4b486e;
+    background: #09637E;
     transform: translateY(-2px);
 }
 
 .welcome-text {
     font-size: 1.2rem;
     font-weight: 600;
-    color: #4b5563;
+    color: #296374;
 }
 
 .main-container {
@@ -70,14 +73,16 @@ body {
     font-size: 3rem;
     font-weight: 800;
     margin-bottom: 0.5rem;
-    color: #f1f2f3;
+    color: white;
+    -webkit-text-stroke: 1px #296374; 
+        text-stroke: 1px #296374;
     text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
 .welcome-section p {
     font-size: 1.3rem;
     opacity: 0.9;
-    color: #6b7280;
+    color: #296374;
 }
 
 .metrics-grid {
@@ -108,7 +113,7 @@ body {
     right: 0;
     height: 4px;
     border: 2px solid rgba(255, 255, 255, 0.2);
-    background: #764ba2;
+    background: linear-gradient(135deg,#7AB2B2, #09637E, #088395);
 }
 
 .metric-card:hover {
@@ -119,7 +124,7 @@ body {
 .metric-card h3 {
     font-size: 1.1rem;
     font-weight: 600;
-    color: #6b7280;
+    color: #0C2C55;
     margin-bottom: 1rem;
     text-transform: uppercase;
     letter-spacing: 1px;
@@ -132,9 +137,9 @@ body {
     margin-bottom: 0.5rem;
 }
 
-.total-expenses .amount { color: #f59e0b; }
-.monthly-budget .amount { color: #10b981; }
-.upcoming-forecast .amount { color: #2940d7; }
+.total-expenses .amount { color: #FF9F9F; }
+.monthly-budget .amount { color: #71C9CE; }
+.upcoming-forecast .amount { color: #DEE791; }
 
 .null-state {
     color: #9ca3af !important;
@@ -142,7 +147,7 @@ body {
 }
 
 .edit-btn {
-    background: #0f5d6d;
+    background: #629FAD;
     color: white;
     border: none;
     padding: 0.8rem 2rem;
@@ -158,7 +163,7 @@ body {
 
 .edit-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4);
+    box-shadow: 0 10px 25px #0C2C55;
 }
 
 .edit-input {
@@ -174,8 +179,8 @@ body {
 
 .edit-input:focus {
     outline: none;
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    border-color: #09637E;
+    box-shadow: 0 0 0 3px #0C2C55;
 }
 
 .actions-grid {
@@ -198,27 +203,27 @@ body {
 }
 
 .action-btn.primary {
-    background: #26a43d;
-    color: white;
-    border: 1px solid #083410;
-    box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4);
+    background: linear-gradient(135deg,#FFE3E1, #FF9494, #FFD1D1);
+    color: #A86464;
+    border: 1px solid #AF3E3E;
+    box-shadow: 0 10px 30px #7AB2B2;
 }
 
 .action-btn.primary:hover {
     transform: translateY(-4px);
-    box-shadow: 0 20px 40px rgba(16, 185, 129, 0.5);
+    box-shadow: 0 20px 40px #A86464;
 }
 
 .action-btn.secondary {
-    background: #5068af;
-    color: white;
-    box-shadow: 0 10px 30px rgba(82, 92, 111, 0.3);
-    border: 1px solid #221515;
+    background: linear-gradient(135deg,#BFF6C3, #A3DC9A, #ACE1AF);
+    color: #4F6F52;
+    box-shadow: 0 10px 30px #7AB2B2;
+    border: 1px solid #3A4D39;
 }
 
 .action-btn.secondary:hover {
     transform: translateY(-4px);
-    box-shadow: 0 20px 40px rgba(107, 114, 128, 0.4);
+    box-shadow: 0 20px 40px #4F6F52;
 }
 
 .overview-section {
@@ -278,13 +283,13 @@ body {
 }
 
 .alert.success {
-    background: linear-gradient(135deg, #10b981, #059669);
-    color: white;
+    background: linear-gradient(135deg, #ACE1AF, #A3DC9A);
+    color: #3A4D39;
 }
 
 .alert.error {
-    background: linear-gradient(135deg, #ef4444, #dc2626);
-    color: white;
+    background: linear-gradient(135deg, #DA6C6C, #CD5656);
+    color: #A86464;
 }
 
 .alert.show {
@@ -406,14 +411,14 @@ body {
 }
 
 .input-form-btn-submit {
-    background: #26a43d;
-    color: white;
+    background: #FFD6BA;
+    color: #AF3E3E;
     box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
 }
 
 .input-form-btn-submit:hover {
     transform: translateY(-2px);
-    box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 15px 35px #FF9494;
 }
 
 .input-form-btn-cancel {
@@ -432,12 +437,12 @@ body {
     width: 60px;
     height: 60px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    background: linear-gradient(135deg, #09637E, #296374);
     color: white;
     border: none;
     font-size: 1.5rem;
     cursor: pointer;
-    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 10px 30px #7AB2B2;
     transition: all 0.3s ease;
     z-index: 800;
     display: none;
@@ -447,7 +452,7 @@ body {
 
 .input-toggle-btn:hover {
     transform: scale(1.1);
-    box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 15px 40px #0C2C55;
 }
 
 .input-toggle-btn.show {
@@ -485,4 +490,29 @@ body {
     .amount {
         font-size: 2.5rem !important;
     }
+}
+.logo-stamp {
+  display: flex;
+  flex-direction: column;
+  font-size: 2rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #088395, #09637E);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  align-items: left;
+  gap: 0.1rem; /* Small spacing below logo text */
+}
+
+.logo-tagline {
+  font-size: 0.55em;
+  font-weight: 200;
+  background: inherit;
+  -webkit-background-clip: inherit;
+  -webkit-text-fill-color: inherit;
+  background-clip: inherit;
+  text-shadow: inherit;
+  opacity: 0.85;
+  letter-spacing: 0.02em;
+  margin-bottom: 10px;
 }

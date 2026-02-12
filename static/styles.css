@@ -377,3 +377,22 @@ body {
 @media (max-width: 600px) {
     .logo-stamp { font-size: 1.3rem; top: 20px; }
 }
+
+.logo-stamp {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem; /* Small spacing below logo text */
+}
+
+.logo-tagline {
+  font-size: 0.55em;
+  font-weight: 400;
+  background: inherit;
+  -webkit-background-clip: inherit;
+  -webkit-text-fill-color: inherit;
+  background-clip: inherit;
+  text-shadow: inherit;
+  opacity: 0.85;
+  letter-spacing: 0.02em;
+}
