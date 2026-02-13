@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics - BudgetWise</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+</head>
+<body>
+    <header class="header">
+        <div class="header-left">
+            <h1 class="logo">BudgetWise</h1>
+            <a href="/dashboard" class="logout-btn" style="background: #5068af;">← Dashboard</a>
+        </div>
+        <div class="header-right">
+            <span class="welcome-text">Analytics</span>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <section class="overview-section">
+            <h3>Financial Analytics</h3>
+            <div style="padding: 2rem; text-align: center;">
+                <div style="font-size: 1.5rem; color: #6b7280; margin-bottom: 2rem;">
+                    📊 Advanced Analytics Coming Soon!
+                </div>
+                <p style="font-size: 1.1rem; color: #9ca3af; line-height: 1.8; max-width: 600px; margin: 0 auto;">
+                    We're working on detailed analytics including spending trends, monthly comparisons, category insights, and predictive forecasting to help you make better financial decisions.
+                </p>
+                <div style="margin-top: 3rem;">
+                    <button class="action-btn primary" onclick="window.location.href='/dashboard'">Back to Dashboard</button>
+                </div>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

@@ -52,6 +52,17 @@ def init_db():
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (user_id) REFERENCES users (id)
     );
+    
+    CREATE TABLE IF NOT EXISTS incomes (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER,
+        source TEXT NOT NULL,
+        amount REAL NOT NULL,
+        date TEXT NOT NULL,
+        description TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES users (id)
+    );
     ''')
     
     conn.commit()
@@ -201,6 +212,10 @@ def get_dashboard_data():
                 (user_id, f'{current_month}-%'))
     total_expenses = cur.fetchone()['total'] or 0
     
+    cur.execute('SELECT SUM(amount) as total FROM incomes WHERE user_id = ? AND date LIKE ?', 
+                (user_id, f'{current_month}-%'))
+    total_income = cur.fetchone()['total'] or 0
+    
     cur.execute('SELECT category, SUM(amount) as total FROM expenses WHERE user_id = ? AND date LIKE ? GROUP BY category',
                 (user_id, f'{current_month}-%'))
     categories = {row['category']: row['total'] for row in cur.fetchall()}
@@ -210,6 +225,7 @@ def get_dashboard_data():
     return jsonify({
         'budget': budget_amount,
         'expenses': total_expenses,
+        'income': total_income,
         'forecast': 0,
         'categories': categories
     })
@@ -252,6 +268,93 @@ def add_expense():
     conn.close()
     
     return jsonify({'success': True})
+
+@app.route('/api/add_income', methods=['POST'])
+def add_income():
+    if 'user_id' not in session:
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    data = request.json
+    user_id = session['user_id']
+    
+    conn = get_db()
+    cur = conn.cursor()
+    
+    cur.execute('INSERT INTO incomes (user_id, source, amount, date, description) VALUES (?, ?, ?, ?, ?)',
+                (user_id, data['source'], data['amount'], data['date'], data.get('description', '')))
+    
+    conn.commit()
+    conn.close()
+    
+    return jsonify({'success': True})
+
+@app.route('/api/get_transactions')
+def get_transactions():
+    if 'user_id' not in session:
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    user_id = session['user_id']
+    conn = get_db()
+    cur = conn.cursor()
+    
+    # Get last 5 expenses
+    cur.execute('SELECT "expense" as type, category as name, amount, date FROM expenses WHERE user_id = ? ORDER BY date DESC, created_at DESC LIMIT 5', (user_id,))
+    expenses = cur.fetchall()
+    
+    # Get last 5 incomes
+    cur.execute('SELECT "income" as type, source as name, amount, date FROM incomes WHERE user_id = ? ORDER BY date DESC, created_at DESC LIMIT 5', (user_id,))
+    incomes = cur.fetchall()
+    
+    # Combine and sort
+    transactions = []
+    for exp in expenses:
+        transactions.append({'type': exp['type'], 'name': exp['name'], 'amount': exp['amount'], 'date': exp['date']})
+    for inc in incomes:
+        transactions.append({'type': inc['type'], 'name': inc['name'], 'amount': inc['amount'], 'date': inc['date']})
+    
+    # Sort by date and take top 5
+    transactions.sort(key=lambda x: x['date'], reverse=True)
+    transactions = transactions[:5]
+    
+    conn.close()
+    return jsonify(transactions)
+
+@app.route('/api/get_total_income')
+def get_total_income():
+    if 'user_id' not in session:
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    user_id = session['user_id']
+    today = date.today()
+    current_month = today.strftime('%Y-%m')
+    
+    conn = get_db()
+    cur = conn.cursor()
+    
+    cur.execute('SELECT SUM(amount) as total FROM incomes WHERE user_id = ? AND date LIKE ?', 
+                (user_id, f'{current_month}-%'))
+    total_income = cur.fetchone()['total'] or 0
+    
+    conn.close()
+    return jsonify({'total': total_income})
+
+@app.route('/profile')
+def profile():
+    if 'user_id' not in session:
+        return redirect(url_for('index'))
+    return render_template('profile.html', user=session.get('name', 'User'), email=session.get('email', ''))
+
+@app.route('/analytics')
+def analytics():
+    if 'user_id' not in session:
+        return redirect(url_for('index'))
+    return render_template('analytics.html', user=session.get('name', 'User'))
+
+@app.route('/settings')
+def settings():
+    if 'user_id' not in session:
+        return redirect(url_for('index'))
+    return render_template('settings.html', user=session.get('name', 'User'))
 
 if __name__ == '__main__':
     init_db()

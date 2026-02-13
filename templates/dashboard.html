@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BudgetWise Dashboard</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <header class="header">
@@ -14,11 +15,21 @@
                 BudgetWise
                 <span class="logo-tagline">AI based expense forecasting tool</span>
             </div>
-
             <a href="/logout" class="logout-btn">Logout</a>
         </div>
         <div class="header-right">
             <span class="welcome-text">Welcome, {{ user }}!</span>
+            <div class="dropdown">
+                <button class="dropdown-toggle" onclick="toggleDropdown()">
+                    Menu ▼
+                </button>
+                <div class="dropdown-menu" id="dropdownMenu">
+                    <a href="/profile" class="dropdown-item">Profile</a>
+                    <a href="/analytics" class="dropdown-item">View Analytics</a>
+                    <a href="/settings" class="dropdown-item">Settings</a>
+                    <a href="/logout" class="dropdown-item">Log Out</a>
+                </div>
+            </div>
         </div>
     </header>
 
@@ -31,88 +42,127 @@
         <section class="metrics-grid" id="metrics-grid">
             <div class="metric-card total-expenses">
                 <h3>Total Expenses</h3>
-                <p class="amount" id="total-expenses">{{ "%.2f"|format(total_expenses) if total_expenses else "0.00" }}</p>
+                <p class="amount" id="total-expenses">{{ '₹0' if total_expenses == 0 else '₹%.0f'|format(total_expenses) }}</p>
             </div>
+            
             <div class="metric-card monthly-budget">
                 <h3>Monthly Budget</h3>
-                <p class="amount editable null-state" id="budget-display">{{ "%.2f"|format(budget_amount) if budget_amount else "NA" }}</p>
+                <p class="amount editable null-state" id="budget-display">{{ 'N/A' if budget_amount == 0 else '₹%.0f'|format(budget_amount) }}</p>
                 <button class="edit-btn" onclick="editBudget()">Set Budget</button>
-                <input type="number" id="budget-input" class="edit-input" style="display: none" placeholder="Enter budget">
+                <input type="number" id="budget-input" class="edit-input" style="display: none;" placeholder="Enter budget (₹)">
             </div>
+            
+            <div class="metric-card remaining-balance">
+                <h3>Remaining Balance</h3>
+                <p class="amount null-state" id="remaining-balance">N/A</p>
+            </div>
+            
             <div class="metric-card upcoming-forecast">
                 <h3>Upcoming Forecast</h3>
-                <p class="amount null-state" id="forecast-amount">{{ "%.2f"|format(forecast_amount) if forecast_amount else "NA" }}</p>
+                <p class="amount null-state" id="forecast-amount">{{ 'N/A' if forecast_amount == 0 else '₹%.0f'|format(forecast_amount) }}</p>
             </div>
         </section>
 
         <section class="actions-grid">
-            <button class="action-btn primary" onclick="openInputPanel()">Add Expense</button>
-            <button class="action-btn secondary" onclick="openProfile()">Add Income</button>
+            <button class="action-btn primary" onclick="openExpenseModal()">+ Add Expense</button>
+            <button class="action-btn secondary" onclick="openIncomeModal()">+ Add Income</button>
         </section>
 
-        <section class="overview-section null-state">
+        <section class="overview-section">
             <h3>Spending Overview</h3>
-            <p class="empty-state">Add your first expense to see charts and insights</p>
-            <div class="charts-placeholder">
-                <div class="chart-placeholder bar-placeholder"></div>
-                <div class="chart-placeholder pie-placeholder"></div>
+            <div class="charts-container" id="charts-container">
+                <div class="chart-box">
+                    <h4>Expense Distribution</h4>
+                    <canvas id="expenseChart"></canvas>
+                </div>
+                <div class="chart-box">
+                    <h4>Recent Transactions</h4>
+                    <div class="transactions-list" id="transactions-list">
+                        <p class="empty-state">No transactions yet</p>
+                    </div>
+                </div>
             </div>
         </section>
 
         <!-- Alert -->
-        <div class="alert" id="alert" style="display: none">
+        <div class="alert" id="alert" style="display: none;">
             <strong id="alert-message"></strong>
         </div>
+    </main>
 
-        <!-- ========== NEW INPUT PANEL ========== -->
-        <div class="input-panel" id="inputPanel">
-            <div class="input-panel-header">
-                <h3>Add Expense</h3>
-                <button class="input-panel-close" onclick="closeInputPanel()">✕</button>
+    <!-- Add Expense Modal -->
+    <div class="modal" id="expenseModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add Expense</h2>
+                <button class="close-btn" onclick="closeExpenseModal()">&times;</button>
             </div>
-            
-            <form id="inputForm" class="input-form">
-                <div class="input-form-group">
-                    <label class="input-form-label">Category</label>
-                    <select class="input-form-input input-form-select" id="expenseCategory" required>
-                        <option value="" disabled selected>Select category</option>
-                        <option value="Food">Food &amp; Dining</option>
-                        <option value="Transport">Transportation</option>
+            <form id="expenseForm">
+                <div class="form-group">
+                    <label for="expense-category">Category</label>
+                    <select id="expense-category" required>
+                        <option value="">Select Category</option>
+                        <option value="Food">Food</option>
+                        <option value="Travel">Travel</option>
                         <option value="Shopping">Shopping</option>
+                        <option value="Bills">Bills</option>
                         <option value="Entertainment">Entertainment</option>
-                        <option value="Bills">Bills &anp; Utilities</option>
-                        <option value="Health">Healthcare</option>
-                        <option value="Education">Education</option>
-                        <option value="Other">Other</option>
+                        <option value="Health">Health</option>
+                        <option value="Others">Others</option>
                     </select>
                 </div>
-                
-                <div class="input-form-group">
-                    <label class="input-form-label">Amount</label>
-                    <input type="number" class="input-form-input" id="expenseAmount" placeholder="0.00" step="0.01" min="0" required>
+                <div class="form-group">
+                    <label for="expense-amount">Amount (₹)</label>
+                    <input type="number" id="expense-amount" placeholder="Enter amount" required min="0" step="0.01">
                 </div>
-                
-                <div class="input-form-group">
-                    <label class="input-form-label">Date</label>
-                    <input type="date" class="input-form-input" id="expenseDate" required>
+                <div class="form-group">
+                    <label for="expense-date">Date</label>
+                    <input type="date" id="expense-date" required>
                 </div>
-                
-                <div class="input-form-group">
-                    <label class="input-form-label">Description (Optional)</label>
-                    <textarea class="input-form-input input-form-textarea" id="expenseDescription" placeholder="Add details about this expense..."></textarea>
+                <div class="form-group">
+                    <label for="expense-description">Description (Optional)</label>
+                    <textarea id="expense-description" placeholder="Add a note..."></textarea>
                 </div>
-                
-                <div class="input-form-buttons">
-                    <button type="button" class="input-form-btn input-form-btn-cancel" onclick="closeInputPanel()">Cancel</button>
-                    <button type="submit" class="input-form-btn input-form-btn-submit">Add Expense</button>
+                <div class="modal-actions">
+                    <button type="button" class="modal-btn cancel" onclick="closeExpenseModal()">Cancel</button>
+                    <button type="submit" class="modal-btn submit">Add Expense</button>
                 </div>
             </form>
         </div>
+    </div>
 
-        <!-- MOBILE TOGGLE BUTTON -->
-        <button class="input-toggle-btn" id="inputToggleBtn" onclick="openInputPanel()">➕</button>
-    </main>
+    <!-- Add Income Modal -->
+    <div class="modal" id="incomeModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add Income</h2>
+                <button class="close-btn" onclick="closeIncomeModal()">&times;</button>
+            </div>
+            <form id="incomeForm">
+                <div class="form-group">
+                    <label for="income-source">Source</label>
+                    <input type="text" id="income-source" placeholder="e.g., Salary, Freelance" required>
+                </div>
+                <div class="form-group">
+                    <label for="income-amount">Amount (₹)</label>
+                    <input type="number" id="income-amount" placeholder="Enter amount" required min="0" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label for="income-date">Date</label>
+                    <input type="date" id="income-date" required>
+                </div>
+                <div class="form-group">
+                    <label for="income-description">Description (Optional)</label>
+                    <textarea id="income-description" placeholder="Add a note..."></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="modal-btn cancel" onclick="closeIncomeModal()">Cancel</button>
+                    <button type="submit" class="modal-btn submit">Add Income</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script src="{{ url_for('static', filename='dashboard.js') }}"></script>
 </body>
 </html>

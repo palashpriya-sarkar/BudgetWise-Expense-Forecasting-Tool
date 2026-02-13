@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - BudgetWise</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+</head>
+<body>
+    <header class="header">
+        <div class="header-left">
+            <h1 class="logo">BudgetWise</h1>
+            <a href="/dashboard" class="logout-btn" style="background: #5068af;">← Dashboard</a>
+        </div>
+        <div class="header-right">
+            <span class="welcome-text">Settings</span>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <section class="overview-section" style="max-width: 800px; margin: 2rem auto;">
+            <h3>Settings</h3>
+            <div style="padding: 2rem;">
+                <div class="form-group">
+                    <label style="font-size: 1.2rem; font-weight: 700; color: #374151;">Appearance</label>
+                    <div style="margin-top: 1rem; padding: 1.5rem; background: rgba(102, 126, 234, 0.05); border-radius: 12px;">
+                        <p style="color: #6b7280;">Theme preferences coming soon</p>
+                    </div>
+                </div>
+                <div class="form-group" style="margin-top: 2rem;">
+                    <label style="font-size: 1.2rem; font-weight: 700; color: #374151;">Notifications</label>
+                    <div style="margin-top: 1rem; padding: 1.5rem; background: rgba(102, 126, 234, 0.05); border-radius: 12px;">
+                        <p style="color: #6b7280;">Email & push notification settings coming soon</p>
+                    </div>
+                </div>
+                <div class="form-group" style="margin-top: 2rem;">
+                    <label style="font-size: 1.2rem; font-weight: 700; color: #374151;">Security</label>
+                    <div style="margin-top: 1rem; padding: 1.5rem; background: rgba(102, 126, 234, 0.05); border-radius: 12px;">
+                        <p style="color: #6b7280;">Password change & 2FA coming soon</p>
+                    </div>
+                </div>
+                <div style="margin-top: 3rem; text-align: center;">
+                    <button class="action-btn primary" onclick="window.location.href='/dashboard'">Back to Dashboard</button>
+                </div>
+            </div>
+        </section>
+    </main>
+</body>
+</html>
