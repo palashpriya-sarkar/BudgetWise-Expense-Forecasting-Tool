@@ -87,6 +87,24 @@ body {
     transform: translateY(-2px);
 }
 
+.dashboard-btn {
+    padding: 0.5rem 1.5rem;
+    background: #31676c;;
+    color: #ffffff;
+    text-decoration: none;
+    border-radius: 25px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border: 1px solid #000000;
+}
+
+.dashboard-btn:hover {
+    background: #ffffff;
+    color:#ffffff;;
+    border:1px solid black;
+    transform: translateY(-2px);
+}
+
 .header-right {
     display: flex;
     align-items: center;
@@ -188,7 +206,7 @@ body {
     margin-bottom: 0.5rem;
     color: #f1f2f3;
         -webkit-text-stroke: 2px #176B87;
-        text-stroke: 2px #176B87;
+        /* -text-stroke: 2px #176B87; */
     font-weight: 800;
     text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
@@ -329,7 +347,26 @@ body {
     border: 1px solid #52734D;
     box-shadow: 0 10px 30px #41AEA9;
 }
+.action-btn-base {
+    padding: 1.5rem 2.5rem;
+    border: none;
+    border-radius: 16px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background: linear-gradient(135deg,#2c827c,#2fcab3,#058d84);
+    color: #14272a;
+    border: 1px solid #14272a;
+    box-shadow: 0 5px 10px #2c827c;
+}
 
+.action-btn-base:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px #2e3232;
+}
 .action-btn.secondary:hover {
     transform: translateY(-4px);
     box-shadow: 0 20px 40px #9EDE73;
@@ -367,23 +404,29 @@ body {
 }
 
 .chart-box {
-    background: rgba(249, 249, 249, 0.5);
-    padding: 2rem;
-    border-radius: 16px;
-    border: 2px solid rgba(209, 217, 230, 0.3);
+    background: rgba(249, 249, 249, 0.8);
+    padding: 2.5rem;
+    border-radius: 20px;
+    border: 2px solid rgba(100, 204, 197, 0.3);
+    position: relative;
+    overflow: hidden;
 }
 
-.chart-box h4 {
-    font-size: 1.2rem;
-    font-weight: 700;
-    color: #374151;
-    margin-bottom: 1.5rem;
-    text-align: center;
+.chart-box::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #FF6B6B, #4ECDC4, #F39C12, #3498DB);
 }
 
 #expenseChart {
-    max-height: 300px;
+    max-height: 320px !important;
+    width: 100% !important;
 }
+
 
 .transactions-list {
     max-height: 350px;

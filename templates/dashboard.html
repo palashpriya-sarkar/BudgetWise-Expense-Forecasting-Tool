@@ -10,7 +10,7 @@
 <body>
     <header class="header">
         <div class="header-left">
-            <!-- BUDGETWISE LOGO STAMP - ADD THIS -->
+            <!-- BUDGETWISE LOGO STAMP -->
             <div class="logo-stamp">
                 BudgetWise
                 <span class="logo-tagline">AI based expense forecasting tool</span>
@@ -72,15 +72,22 @@
             <h3>Spending Overview</h3>
             <div class="charts-container" id="charts-container">
                 <div class="chart-box">
-                    <h4>Expense Distribution</h4>
-                    <canvas id="expenseChart"></canvas>
-                </div>
-                <div class="chart-box">
                     <h4>Recent Transactions</h4>
                     <div class="transactions-list" id="transactions-list">
                         <p class="empty-state">No transactions yet</p>
                     </div>
                 </div>
+                <div class="chart-box">
+                    <h4>Expense Distribution</h4>
+                    <div style="position: relative; height: 320px;">
+                        <canvas id="expenseChart"></canvas>
+                    </div>
+                    <!-- Color Legend -->
+                    <div class="color-legend" id="colorLegend" style="margin-top: 1rem; display: none;">
+                    <!-- Auto-generated legend items -->
+                    </div>
+                </div>
+
             </div>
         </section>
 
