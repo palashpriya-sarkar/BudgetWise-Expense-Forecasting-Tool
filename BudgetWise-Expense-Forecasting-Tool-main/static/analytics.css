@@ -1,0 +1,229 @@
+/* Base Reset & Typography */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #E8FFFF 0%, #B8FFF9 50%, #DAFFFB 100%);
+    min-height: 100vh;
+    color: #333;
+    line-height: 1.6;
+}
+
+/* Header */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px rgba(59, 172, 182, 0.3);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.header::before {
+  content: '';
+  position: absolute;
+  top: -2px; left: -2px; right: -2px; bottom: -2px;
+  background: linear-gradient(135deg, #B8FFF9, #DAFFFB, #EFFFFD, #64CCC5);
+  z-index: -1;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: exclude;
+}
+
+.logo-stamp {
+    font-size: 2rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #176B87, #04364A);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.1rem;
+}
+
+.logo-tagline {
+    font-size: 0.55em;
+    font-weight: 400;
+    color: #04364A;
+    opacity: 0.85;
+    letter-spacing: 0.02em;
+}
+
+.logout-btn {
+    padding: 0.7rem 1.5rem;
+    background: #31676c;
+    color: white;
+    text-decoration: none;
+    border-radius: 25px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border: 1px solid #000;
+}
+
+.logout-btn:hover {
+    background: #ffffff;
+    color: #31676c;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(4, 54, 74, 0.2);
+}
+
+.header-right .welcome-text {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #176B87;
+}
+
+/* Main Container */
+.analytics-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.analytics-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 2.5rem;
+    border-radius: 24px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+.analytics-header h2 {
+    font-size: 2.8rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #176B87, #04364A);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 0.75rem;
+}
+
+.analytics-header p {
+    font-size: 1.2rem;
+    color: #626E7A;
+}
+
+/* Grid & Cards */
+.analytics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+    gap: 2.5rem;
+    margin-bottom: 3rem;
+}
+
+.analytics-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    padding: 2.5rem;
+    border-radius: 24px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+    border: 2px solid rgba(100, 204, 197, 0.2);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.analytics-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #64CCC5, #04364A, #176B87);
+}
+
+.analytics-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.12);
+}
+
+.analytics-card h3 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #04364A;
+    margin-bottom: 1.75rem;
+    padding-bottom: 1rem;
+    border-bottom: 3px solid #64CCC5;
+}
+
+/* Forecast Summary Box */
+.forecast-summary { display: flex; flex-direction: column; gap: 1.25rem; }
+
+.forecast-metric {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.25rem 1.5rem;
+    background: linear-gradient(135deg, rgba(100, 204, 197, 0.1), rgba(4, 54, 74, 0.05));
+    border-radius: 16px;
+    border: 1px solid rgba(100, 204, 197, 0.2);
+}
+
+.forecast-metric-label { font-weight: 600; color: #176B87; font-size: 1.05rem; }
+.forecast-metric-value { font-size: 1.75rem; font-weight: 800; color: #04364A; }
+
+/* Badges */
+.confidence-badge {
+    padding: 0.5rem 1.25rem; border-radius: 25px; font-weight: 700; font-size: 0.95rem;
+}
+.confidence-high { background: linear-gradient(135deg, #A8DF8E, #9EDE73); color: #52734D; }
+.confidence-medium { background: linear-gradient(135deg, #FFD966, #FFCD4B); color: #7C5E10; }
+.confidence-low { background: linear-gradient(135deg, #FF9F9F, #E97777); color: #7C444F; }
+
+/* Insight Lists */
+.insights-list, .suggestions-list { display: flex; flex-direction: column; gap: 1.25rem; }
+.insight-item, .suggestion-item {
+    padding: 1.5rem; border-radius: 16px;
+    background: rgba(255, 255, 255, 0.85);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
+    border-left: 5px solid transparent;
+}
+.insight-item.observation { border-left-color: #42C2FF; background: rgba(66, 194, 255, 0.05); }
+.insight-item.trend { border-left-color: #F39E60; background: rgba(243, 158, 96, 0.05); }
+.insight-item.pattern { border-left-color: #64CCC5; background: rgba(100, 204, 197, 0.05); }
+
+.insight-title { font-weight: 700; color: #04364A; margin-bottom: 0.5rem; font-size: 1.1rem;}
+.insight-description { color: #626E7A; }
+
+/* Suggestions */
+.suggestion-item { display: flex; align-items: center; gap: 1rem; }
+.suggestion-item.warning { border-left-color: #FF6B6B; background: rgba(255, 107, 107, 0.05); }
+.suggestion-item.success { border-left-color: #9EDE73; background: rgba(158, 222, 115, 0.05); }
+.suggestion-icon { font-size: 1.75rem; }
+.suggestion-title { font-weight: 700; color: #04364A; }
+.suggestion-message { color: #626E7A; }
+
+/* Charts Area */
+.chart-container {
+    position: relative; height: 350px; margin-top: 1.5rem;
+    border-radius: 16px; background: rgba(255, 255, 255, 0.9);
+    padding: 1rem; box-shadow: 0 12px 40px rgba(0, 0, 0, 0.05);
+}
+
+/* Loading & Empty */
+.loading, .empty-state { text-align: center; padding: 4rem; color: #626E7A; }
+.empty-state-icon { font-size: 4rem; margin-bottom: 1rem; }
+.back-button {
+    display: inline-block; margin-top: 1rem; padding: 1rem 2rem;
+    background: linear-gradient(135deg, #0C7779, #005461); color: white;
+    text-decoration: none; border-radius: 12px; font-weight: bold;
+}
+
+/* Spinner */
+.spinner {
+    width: 50px; height: 50px; margin: 0 auto 1rem;
+    border: 4px solid rgba(0,0,0,0.1);
+    border-top: 4px solid #176B87;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
