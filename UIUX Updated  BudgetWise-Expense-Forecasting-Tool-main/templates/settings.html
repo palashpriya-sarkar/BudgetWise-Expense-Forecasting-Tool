@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BudgetWise — Settings</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+</head>
+<body>
+
+    <!-- ══ HEADER ═════════════════════════════════════════════ -->
+    <header class="header">
+        <div class="header-left">
+            <div class="logo-stamp">
+                BudgetWise
+                <span class="logo-tagline">AI-powered expense forecasting</span>
+            </div>
+            <a href="/dashboard" class="dashboard-btn">← Dashboard</a>
+        </div>
+        <div class="header-right">
+            <span class="welcome-text">Settings</span>
+            <a href="/logout" class="logout-btn">Sign out</a>
+        </div>
+    </header>
+
+    <!-- ══ MAIN CONTENT ═══════════════════════════════════════ -->
+    <main class="main-container">
+
+        <!-- Hero banner -->
+        <section class="welcome-section">
+            <h2>Settings</h2>
+            <p>Manage your preferences, notifications, and account security.</p>
+        </section>
+
+        <!-- Settings cards -->
+        <section class="overview-section" style="max-width:720px; margin:0 auto;">
+            <h3>Preferences</h3>
+
+            <div style="display:flex; flex-direction:column; gap:1.25rem; padding:0.5rem 0;">
+
+                <!-- Appearance -->
+                <div style="background:var(--surface-2); border:1px solid var(--border); border-radius:var(--r-lg); overflow:hidden;">
+                    <div style="padding:1.25rem 1.5rem; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:0.75rem;">
+                        <span style="font-size:1.2rem;">🎨</span>
+                        <div>
+                            <p style="font-size:0.9rem; font-weight:700; color:var(--navy); margin-bottom:0.1rem;">Appearance</p>
+                            <p style="font-size:0.78rem; color:var(--text-3);">Theme, display, and layout options</p>
+                        </div>
+                    </div>
+                    <div style="padding:1.25rem 1.5rem;">
+                        <div style="display:flex; align-items:center; justify-content:space-between; padding:0.75rem 0;">
+                            <div>
+                                <p style="font-size:0.88rem; font-weight:600; color:var(--text-2); margin-bottom:0.15rem;">Theme</p>
+                                <p style="font-size:0.78rem; color:var(--text-3);">Light / Dark mode support coming soon</p>
+                            </div>
+                            <div style="padding:0.35rem 0.9rem; background:var(--border); border-radius:50px; font-size:0.75rem; color:var(--text-3); font-weight:600;">Coming soon</div>
+                        </div>
+                        <div style="display:flex; align-items:center; justify-content:space-between; padding:0.75rem 0; border-top:1px solid var(--border);">
+                            <div>
+                                <p style="font-size:0.88rem; font-weight:600; color:var(--text-2); margin-bottom:0.15rem;">Currency</p>
+                                <p style="font-size:0.78rem; color:var(--text-3);">Currently: Indian Rupee (₹)</p>
+                            </div>
+                            <div style="padding:0.35rem 0.9rem; background:rgba(100,204,197,0.12); border-radius:50px; font-size:0.75rem; color:var(--teal-dark); font-weight:600; border:1px solid rgba(100,204,197,0.25);">₹ INR</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Notifications -->
+                <div style="background:var(--surface-2); border:1px solid var(--border); border-radius:var(--r-lg); overflow:hidden;">
+                    <div style="padding:1.25rem 1.5rem; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:0.75rem;">
+                        <span style="font-size:1.2rem;">🔔</span>
+                        <div>
+                            <p style="font-size:0.9rem; font-weight:700; color:var(--navy); margin-bottom:0.1rem;">Notifications</p>
+                            <p style="font-size:0.78rem; color:var(--text-3);">Email and push alerts</p>
+                        </div>
+                    </div>
+                    <div style="padding:1.25rem 1.5rem;">
+                        <div style="display:flex; align-items:center; justify-content:space-between; padding:0.75rem 0;">
+                            <div>
+                                <p style="font-size:0.88rem; font-weight:600; color:var(--text-2); margin-bottom:0.15rem;">Budget alerts</p>
+                                <p style="font-size:0.78rem; color:var(--text-3);">Notify when spending approaches budget limit</p>
+                            </div>
+                            <div style="padding:0.35rem 0.9rem; background:var(--border); border-radius:50px; font-size:0.75rem; color:var(--text-3); font-weight:600;">Coming soon</div>
+                        </div>
+                        <div style="display:flex; align-items:center; justify-content:space-between; padding:0.75rem 0; border-top:1px solid var(--border);">
+                            <div>
+                                <p style="font-size:0.88rem; font-weight:600; color:var(--text-2); margin-bottom:0.15rem;">Monthly summary</p>
+                                <p style="font-size:0.78rem; color:var(--text-3);">Receive a monthly expense report via email</p>
+                            </div>
+                            <div style="padding:0.35rem 0.9rem; background:var(--border); border-radius:50px; font-size:0.75rem; color:var(--text-3); font-weight:600;">Coming soon</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Security -->
+                <div style="background:var(--surface-2); border:1px solid var(--border); border-radius:var(--r-lg); overflow:hidden;">
+                    <div style="padding:1.25rem 1.5rem; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:0.75rem;">
+                        <span style="font-size:1.2rem;">🔐</span>
+                        <div>
+                            <p style="font-size:0.9rem; font-weight:700; color:var(--navy); margin-bottom:0.1rem;">Security</p>
+                            <p style="font-size:0.78rem; color:var(--text-3);">Password and two-factor authentication</p>
+                        </div>
+                    </div>
+                    <div style="padding:1.25rem 1.5rem;">
+                        <div style="display:flex; align-items:center; justify-content:space-between; padding:0.75rem 0;">
+                            <div>
+                                <p style="font-size:0.88rem; font-weight:600; color:var(--text-2); margin-bottom:0.15rem;">Change password</p>
+                                <p style="font-size:0.78rem; color:var(--text-3);">Update your account password</p>
+                            </div>
+                            <div style="padding:0.35rem 0.9rem; background:var(--border); border-radius:50px; font-size:0.75rem; color:var(--text-3); font-weight:600;">Coming soon</div>
+                        </div>
+                        <div style="display:flex; align-items:center; justify-content:space-between; padding:0.75rem 0; border-top:1px solid var(--border);">
+                            <div>
+                                <p style="font-size:0.88rem; font-weight:600; color:var(--text-2); margin-bottom:0.15rem;">Two-factor authentication (2FA)</p>
+                                <p style="font-size:0.78rem; color:var(--text-3);">Add an extra layer of security to your account</p>
+                            </div>
+                            <div style="padding:0.35rem 0.9rem; background:var(--border); border-radius:50px; font-size:0.75rem; color:var(--text-3); font-weight:600;">Coming soon</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div style="display:flex; gap:1rem; flex-wrap:wrap; margin-top:0.5rem;">
+                    <button class="action-btn-base" onclick="window.location.href='/dashboard'"
+                            style="flex:1; min-width:160px;">
+                        ← Back to Dashboard
+                    </button>
+                    <button class="action-btn-base" onclick="window.location.href='/profile'"
+                            style="flex:1; min-width:160px; background:linear-gradient(135deg,#64748B,#94A3B8);">
+                        👤 View Profile
+                    </button>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+</body>
+</html>

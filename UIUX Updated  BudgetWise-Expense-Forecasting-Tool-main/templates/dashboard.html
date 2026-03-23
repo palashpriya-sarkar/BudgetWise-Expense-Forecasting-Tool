@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BudgetWise — Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+    <!-- ══ HEADER ═════════════════════════════════════════════ -->
+    <header class="header">
+        <div class="header-left">
+            <div class="logo-stamp">
+                BudgetWise
+                <span class="logo-tagline">AI-powered expense forecasting</span>
+            </div>
+            <a href="/logout" class="logout-btn">Sign out</a>
+        </div>
+
+        <div class="header-right">
+            <span class="welcome-text">{{ user }}</span>
+            <div class="dropdown">
+                <button class="dropdown-toggle" onclick="toggleDropdown()">
+                    Menu&nbsp;▾
+                </button>
+                <nav class="dropdown-menu" id="dropdownMenu" role="menu">
+                    <a href="/profile"   class="dropdown-item" role="menuitem">👤&nbsp; Profile</a>
+                    <a href="/analytics" class="dropdown-item" role="menuitem">📊&nbsp; Analytics</a>
+                    <a href="/settings"  class="dropdown-item" role="menuitem">⚙️&nbsp; Settings</a>
+                    <a href="/logout"    class="dropdown-item" role="menuitem">🚪&nbsp; Sign out</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- ══ MAIN CONTENT ═══════════════════════════════════════ -->
+    <main class="main-container">
+
+        <!-- Hero banner -->
+        <section class="welcome-section">
+            <h2>Good to see you, {{ user }}!</h2>
+            <p>Here's your financial snapshot for this month. Set a budget or add an expense to get started.</p>
+        </section>
+
+        <!-- ── Metric cards ─────────────────────────────────── -->
+        <section class="metrics-grid" id="metrics-grid" aria-label="Key metrics">
+
+            <div class="metric-card total-expenses">
+                <h3>This Month's Expenses</h3>
+                <span class="amount" id="total-expenses">
+                    {{ '₹0' if total_expenses == 0 else '₹%.0f'|format(total_expenses) }}
+                </span>
+            </div>
+
+            <div class="metric-card monthly-budget">
+                <h3>Monthly Budget</h3>
+                <span class="amount editable null-state" id="budget-display">
+                    {{ 'Not set' if budget_amount == 0 else '₹%.0f'|format(budget_amount) }}
+                </span>
+                <input type="number" id="budget-input" class="edit-input"
+                       style="display:none;" placeholder="Enter amount (₹)" min="0" step="1">
+                <button class="edit-btn" onclick="editBudget()">
+                    {{ 'Set Budget' if budget_amount == 0 else 'Edit Budget' }}
+                </button>
+            </div>
+
+            <div class="metric-card remaining-balance">
+                <h3>Remaining Balance</h3>
+                <span class="amount null-state" id="remaining-balance">—</span>
+            </div>
+
+            <div class="metric-card upcoming-forecast">
+                <h3>AI Forecast · Next 30 Days</h3>
+                <span class="amount null-state" id="forecast-amount">
+                    {{ 'Calculating…' if forecast_amount == 0 else '₹%.0f'|format(forecast_amount) }}
+                </span>
+            </div>
+
+        </section>
+
+        <!-- ── Action buttons ───────────────────────────────── -->
+        <section class="actions-grid" aria-label="Quick actions">
+            <button class="action-btn primary" onclick="openExpenseModal()">
+                ＋ Add Expense
+            </button>
+            <button class="action-btn secondary" onclick="openIncomeModal()">
+                ＋ Add Income
+            </button>
+            <a href="/analytics" class="action-btn-base" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center; gap:0.5rem;">
+                📊 View Analytics
+            </a>
+        </section>
+
+        <!-- ── Overview section ─────────────────────────────── -->
+        <section class="overview-section">
+            <h3>Spending Overview</h3>
+
+            <div class="charts-container" id="charts-container">
+
+                <!-- Recent transactions -->
+                <div class="chart-box">
+                    <h4>Recent Transactions</h4>
+                    <div class="transactions-list" id="transactions-list">
+                        <p class="empty-state">No transactions yet — add your first expense or income above.</p>
+                    </div>
+                </div>
+
+                <!-- Expense donut chart -->
+                <div class="chart-box">
+                    <h4>Expense Breakdown</h4>
+                    <div style="position:relative; height:280px;">
+                        <canvas id="expenseChart" aria-label="Expense breakdown chart" role="img"></canvas>
+                    </div>
+                    <!-- Auto-generated legend -->
+                    <div class="color-legend" id="colorLegend" style="margin-top:1rem; display:none;"></div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ── Alert toast ───────────────────────────────────────── -->
+    <div class="alert" id="alert" role="alert" style="display:none;">
+        <strong id="alert-message"></strong>
+    </div>
+
+    <!-- ══ ADD EXPENSE MODAL ══════════════════════════════════ -->
+    <div class="modal" id="expenseModal" role="dialog" aria-modal="true" aria-labelledby="expModalTitle">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="expModalTitle">Add Expense</h2>
+                <button class="close-btn" onclick="closeExpenseModal()" aria-label="Close">&times;</button>
+            </div>
+
+            <form id="expenseForm" novalidate>
+
+                <div class="form-group">
+                    <label for="expense-category">Category</label>
+                    <select id="expense-category" required>
+                        <option value="">Select a category…</option>
+                        <option value="Food">🍜 Food</option>
+                        <option value="Travel">✈️ Travel</option>
+                        <option value="Shopping">🛍️ Shopping</option>
+                        <option value="Bills">🧾 Bills</option>
+                        <option value="Entertainment">🎬 Entertainment</option>
+                        <option value="Health">🏥 Health</option>
+                        <option value="Transport">🚗 Transport</option>
+                        <option value="Education">📚 Education</option>
+                        <option value="Others">📦 Others</option>
+                    </select>
+                    <button type="button" class="add-custom-category-btn"
+                            onclick="showCustomCategoryModal('expense')">
+                        + Custom category
+                    </button>
+                </div>
+
+                <div class="form-group">
+                    <label for="expense-amount">Amount (₹)</label>
+                    <input type="number" id="expense-amount" placeholder="0.00"
+                           required min="0.01" step="0.01">
+                </div>
+
+                <div class="form-group">
+                    <label for="expense-date">Date</label>
+                    <input type="date" id="expense-date" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="expense-description">Note (optional)</label>
+                    <textarea id="expense-description" placeholder="Add a short description…"></textarea>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="modal-btn cancel" onclick="closeExpenseModal()">Cancel</button>
+                    <button type="submit"  class="modal-btn submit">Save Expense</button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+    <!-- ══ ADD INCOME MODAL ═══════════════════════════════════ -->
+    <div class="modal" id="incomeModal" role="dialog" aria-modal="true" aria-labelledby="incModalTitle">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="incModalTitle">Add Income</h2>
+                <button class="close-btn" onclick="closeIncomeModal()" aria-label="Close">&times;</button>
+            </div>
+
+            <form id="incomeForm" novalidate>
+
+                <div class="form-group">
+                    <label for="income-source">Source</label>
+                    <select id="income-source" required>
+                        <option value="">Select a source…</option>
+                        <option value="Salary">💼 Salary</option>
+                        <option value="Freelance">🖥️ Freelance</option>
+                        <option value="Investment">📈 Investment</option>
+                        <option value="Business">🏢 Business</option>
+                        <option value="Gift">🎁 Gift</option>
+                        <option value="Other">📦 Other</option>
+                    </select>
+                    <button type="button" class="add-custom-category-btn"
+                            onclick="showCustomCategoryModal('income')">
+                        + Custom source
+                    </button>
+                </div>
+
+                <div class="form-group">
+                    <label for="income-amount">Amount (₹)</label>
+                    <input type="number" id="income-amount" placeholder="0.00"
+                           required min="0.01" step="0.01">
+                </div>
+
+                <div class="form-group">
+                    <label for="income-date">Date</label>
+                    <input type="date" id="income-date" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="income-description">Note (optional)</label>
+                    <textarea id="income-description" placeholder="Add a short description…"></textarea>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="modal-btn cancel" onclick="closeIncomeModal()">Cancel</button>
+                    <button type="submit"  class="modal-btn submit">Save Income</button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='dashboard.js') }}"></script>
+
+</body>
+</html>

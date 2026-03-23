@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BudgetWise — Analytics</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='analytics.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+    <!-- ══ HEADER ═════════════════════════════════════════════ -->
+    <header class="header">
+        <div class="header-left">
+            <div class="logo-stamp">
+                BudgetWise
+                <span class="logo-tagline">AI-powered expense forecasting</span>
+            </div>
+            <a href="/dashboard" class="logout-btn">← Dashboard</a>
+        </div>
+        <div class="header-right">
+            <span class="welcome-text">Analytics &amp; Insights</span>
+        </div>
+    </header>
+
+    <!-- ══ MAIN CONTENT ═══════════════════════════════════════ -->
+    <main class="analytics-container">
+
+        <!-- Page header banner -->
+        <div class="analytics-header">
+            <h2>Financial Analytics &amp; Forecast</h2>
+            <p>AI-powered insights built on your real spending patterns to help you plan smarter.</p>
+        </div>
+
+        <!-- Loading state -->
+        <div id="loading" class="loading" aria-live="polite">
+            Loading your analytics…
+        </div>
+
+        <!-- ── Main analytics content (shown after load) ────── -->
+        <div id="analytics-content" style="display:none;">
+
+            <!-- Row 1: Forecast summary + Weekly trend -->
+            <div class="analytics-grid">
+
+                <div class="analytics-card">
+                    <h3>📊 Monthly Expense Forecast</h3>
+                    <div class="forecast-summary">
+
+                        <div class="forecast-metric">
+                            <span class="forecast-metric-label">Predicted Expenses</span>
+                            <span class="forecast-metric-value" id="forecast-amount">₹0</span>
+                        </div>
+
+                        <div class="forecast-metric">
+                            <span class="forecast-metric-label">Model Confidence</span>
+                            <span class="forecast-metric-value">
+                                <span id="confidence-badge" class="confidence-badge">—</span>
+                            </span>
+                        </div>
+
+                        <div class="forecast-metric">
+                            <span class="forecast-metric-label">Daily Average</span>
+                            <span class="forecast-metric-value" id="daily-avg">₹0</span>
+                        </div>
+
+                        <div class="forecast-metric">
+                            <span class="forecast-metric-label">Spending Trend</span>
+                            <span class="forecast-metric-value" id="trend-indicator">—</span>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="analytics-card">
+                    <h3>📈 Weekly Spending (Last 4 Weeks)</h3>
+                    <div class="chart-container">
+                        <canvas id="weeklyTrendChart" aria-label="Weekly spending trend chart" role="img"></canvas>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Row 2: Key observations -->
+            <div class="analytics-card" style="margin-bottom:1.5rem;">
+                <h3>🔍 Key Observations from Your Data</h3>
+                <div id="observations" class="insights-list">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <!-- Row 3: Budget suggestions -->
+            <div class="analytics-card" style="margin-bottom:1.5rem;">
+                <h3>💡 Budget Management Suggestions</h3>
+                <div id="suggestions" class="suggestions-list">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <!-- Row 4: Next 7 days forecast chart -->
+            <div class="analytics-card">
+                <h3>📅 Next 7 Days — Daily Forecast</h3>
+                <div class="chart-container">
+                    <canvas id="weekForecastChart" aria-label="7-day forecast chart" role="img"></canvas>
+                </div>
+            </div>
+
+        </div><!-- /#analytics-content -->
+
+        <!-- Empty / insufficient data state -->
+        <div id="empty-state" style="display:none;" class="empty-state">
+            <span class="empty-state-icon">📊</span>
+            <h3>Not Enough Data Yet</h3>
+            <p>Add at least 7 days of expense data to unlock AI-powered forecasts and spending insights.</p>
+            <a href="/dashboard" class="back-button">← Go to Dashboard</a>
+        </div>
+
+    </main>
+
+    <!-- ══ Inline analytics JS (preserved exactly) ═══════════ -->
+    <script>
+        let weeklyTrendChart = null;
+        let weekForecastChart = null;
+
+        document.addEventListener('DOMContentLoaded', loadAnalytics);
+
+        async function loadAnalytics() {
+            try {
+                const response = await fetch('/api/get-analytics-data');
+                const data = await response.json();
+
+                document.getElementById('loading').style.display = 'none';
+
+                if (data.forecast.insights.status === 'insufficient_data') {
+                    document.getElementById('empty-state').style.display = 'block';
+                    return;
+                }
+
+                document.getElementById('analytics-content').style.display = 'block';
+                updateForecastSummary(data.forecast);
+                renderObservations(data.forecast.insights, data.current_expenses, data.budget);
+                renderSuggestions(data.suggestions);
+                renderWeeklyTrendChart(data.weekly_trend);
+                renderWeekForecastChart(data.forecast.insights.predictions);
+
+            } catch (error) {
+                console.error('Error loading analytics:', error);
+                document.getElementById('loading').innerHTML =
+                    '<p style="color:#DC2626;">Error loading analytics. Please refresh and try again.</p>';
+            }
+        }
+
+        function updateForecastSummary(forecast) {
+            document.getElementById('forecast-amount').textContent =
+                '₹' + forecast.amount.toLocaleString('en-IN', { maximumFractionDigits: 0 });
+
+            const confidence = forecast.confidence;
+            const badge = document.getElementById('confidence-badge');
+            if (confidence >= 70) {
+                badge.textContent = confidence.toFixed(1) + '% — High';
+                badge.className = 'confidence-badge confidence-high';
+            } else if (confidence >= 50) {
+                badge.textContent = confidence.toFixed(1) + '% — Medium';
+                badge.className = 'confidence-badge confidence-medium';
+            } else {
+                badge.textContent = confidence.toFixed(1) + '% — Low';
+                badge.className = 'confidence-badge confidence-low';
+            }
+
+            document.getElementById('daily-avg').textContent =
+                '₹' + (forecast.insights.daily_average || 0).toLocaleString('en-IN', { maximumFractionDigits: 0 });
+
+            const trend = forecast.insights.trend;
+            const trendEl = document.getElementById('trend-indicator');
+            if (trend === 'increasing') {
+                trendEl.innerHTML = '📈 Increasing';
+                trendEl.style.color = '#F97316';
+                trendEl.style.fontSize = '1rem';
+            } else {
+                trendEl.innerHTML = '📉 Decreasing';
+                trendEl.style.color = '#059669';
+                trendEl.style.fontSize = '1rem';
+            }
+        }
+
+        function renderObservations(insights, currentExpenses, budget) {
+            const container = document.getElementById('observations');
+            const observations = [];
+
+            if (insights.forecast && currentExpenses) {
+                const forecastAmount = insights.forecast;
+                const diff = forecastAmount - currentExpenses;
+                const diffPct = currentExpenses > 0 ? (diff / currentExpenses * 100) : 0;
+                observations.push({
+                    type: 'observation',
+                    title: 'Forecast vs Current Month',
+                    description: `Based on your spending patterns, next month's expenses are predicted at ₹${forecastAmount.toLocaleString('en-IN', { maximumFractionDigits: 0 })}, which is ${diffPct >= 0 ? 'higher' : 'lower'} by ${Math.abs(diffPct).toFixed(1)}% compared to this month (₹${currentExpenses.toLocaleString('en-IN', { maximumFractionDigits: 0 })}).`
+                });
+            }
+
+            if (insights.trend) {
+                const trendDesc = insights.trend === 'increasing'
+                    ? 'Your spending shows an upward trend. The AI model detected increasing daily expenses over recent weeks.'
+                    : 'Your spending shows a downward trend. Your consistent budget discipline is paying off!';
+                observations.push({
+                    type: 'trend',
+                    title: 'Spending Trend Analysis',
+                    description: trendDesc
+                });
+            }
+
+            if (insights.confidence) {
+                const confLevel = insights.confidence >= 70 ? 'high' : insights.confidence >= 50 ? 'moderate' : 'limited';
+                observations.push({
+                    type: 'pattern',
+                    title: 'Forecast Reliability',
+                    description: `The Random Forest model has ${confLevel} confidence (${insights.confidence.toFixed(1)}%) in this forecast. ${confLevel === 'high' ? 'Your consistent spending patterns enable accurate predictions.' : 'Adding more daily expense data will improve accuracy over time.'}`
+                });
+            }
+
+            if (insights.daily_average && insights.current_daily_avg) {
+                const dailyDiff = ((insights.daily_average - insights.current_daily_avg) / insights.current_daily_avg * 100).toFixed(1);
+                observations.push({
+                    type: 'observation',
+                    title: 'Daily Spending Pattern',
+                    description: `Your current daily average is ₹${insights.current_daily_avg.toLocaleString('en-IN', { maximumFractionDigits: 0 })}. The forecast projects a daily average of ₹${insights.daily_average.toLocaleString('en-IN', { maximumFractionDigits: 0 })} next month (${dailyDiff >= 0 ? '+' : ''}${dailyDiff}% change).`
+                });
+            }
+
+            if (observations.length === 0) {
+                container.innerHTML = '<p style="color:#7A9BAA; font-style:italic; padding:1rem 0;">No observations to display yet.</p>';
+                return;
+            }
+
+            container.innerHTML = observations.map(obs => `
+                <div class="insight-item ${obs.type}">
+                    <div class="insight-title">${obs.title}</div>
+                    <div class="insight-description">${obs.description}</div>
+                </div>
+            `).join('');
+        }
+
+        function renderSuggestions(suggestions) {
+            const container = document.getElementById('suggestions');
+
+            if (!suggestions || suggestions.length === 0) {
+                container.innerHTML = '<p style="color:#7A9BAA; font-style:italic; padding:1rem 0;">No specific suggestions right now — keep tracking your expenses!</p>';
+                return;
+            }
+
+            const iconMap = {
+                warning: '⚠️',
+                caution: '⚡',
+                info:    'ℹ️',
+                success: '✅',
+                alert:   '🔔'
+            };
+
+            container.innerHTML = suggestions.map(sug => `
+                <div class="suggestion-item ${sug.type}">
+                    <div class="suggestion-icon">${iconMap[sug.type] || '💡'}</div>
+                    <div class="suggestion-content">
+                        <div class="suggestion-title">${sug.title}</div>
+                        <div class="suggestion-message">${sug.message}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderWeeklyTrendChart(weeklyData) {
+            const ctx = document.getElementById('weeklyTrendChart').getContext('2d');
+            if (weeklyTrendChart) weeklyTrendChart.destroy();
+
+            weeklyTrendChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: weeklyData.map(w => w.week),
+                    datasets: [{
+                        label: 'Weekly Expenses',
+                        data: weeklyData.map(w => w.amount),
+                        borderColor: '#64CCC5',
+                        backgroundColor: 'rgba(100,204,197,0.08)',
+                        borderWidth: 2.5,
+                        tension: 0.45,
+                        fill: true,
+                        pointRadius: 5,
+                        pointHoverRadius: 7,
+                        pointBackgroundColor: '#04364A',
+                        pointBorderColor: '#ffffff',
+                        pointBorderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(4,54,74,0.95)',
+                            titleColor: '#ffffff',
+                            bodyColor: 'rgba(255,255,255,0.8)',
+                            borderColor: '#64CCC5',
+                            borderWidth: 1,
+                            cornerRadius: 10,
+                            padding: 12,
+                            callbacks: {
+                                label: ctx => 'Spent: ₹' + ctx.parsed.y.toLocaleString('en-IN')
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: v => '₹' + v.toLocaleString('en-IN'),
+                                color: '#7A9BAA',
+                                font: { size: 11, family: 'DM Sans' }
+                            },
+                            grid: { color: 'rgba(59,172,182,0.08)' }
+                        },
+                        x: {
+                            ticks: {
+                                color: '#7A9BAA',
+                                font: { size: 11, family: 'DM Sans' }
+                            },
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderWeekForecastChart(predictions) {
+            const ctx = document.getElementById('weekForecastChart').getContext('2d');
+            if (weekForecastChart) weekForecastChart.destroy();
+
+            weekForecastChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: predictions.map((_, i) => `Day ${i + 1}`),
+                    datasets: [{
+                        label: 'Predicted Daily Expense',
+                        data: predictions,
+                        backgroundColor: 'rgba(100,204,197,0.6)',
+                        borderColor: '#3BACB6',
+                        borderWidth: 1.5,
+                        borderRadius: 8,
+                        borderSkipped: false,
+                        hoverBackgroundColor: 'rgba(100,204,197,0.9)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(4,54,74,0.95)',
+                            titleColor: '#ffffff',
+                            bodyColor: 'rgba(255,255,255,0.8)',
+                            borderColor: '#64CCC5',
+                            borderWidth: 1,
+                            cornerRadius: 10,
+                            padding: 12,
+                            callbacks: {
+                                label: ctx => 'Forecast: ₹' + ctx.parsed.y.toLocaleString('en-IN', { maximumFractionDigits: 0 })
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: v => '₹' + v.toLocaleString('en-IN', { maximumFractionDigits: 0 }),
+                                color: '#7A9BAA',
+                                font: { size: 11, family: 'DM Sans' }
+                            },
+                            grid: { color: 'rgba(59,172,182,0.08)' }
+                        },
+                        x: {
+                            ticks: {
+                                color: '#7A9BAA',
+                                font: { size: 11, family: 'DM Sans' }
+                            },
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+
+</body>
+</html>
